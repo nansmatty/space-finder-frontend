@@ -2,6 +2,10 @@ import './App.css';
 import { useState } from 'react';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import LoginComponent from './components/LoginComponent';
+import { AuthService } from './services/AuthService';
+
+const authService = new AuthService();
 
 function App() {
 	const [userName, setUserName] = useState<string | undefined>(undefined);
@@ -21,7 +25,7 @@ function App() {
 				},
 				{
 					path: '/login',
-					element: <div>Login Page!!!</div>,
+					element: <LoginComponent authService={authService} setUserNameCb={setUserName} />,
 				},
 				{
 					path: '/profile',
@@ -50,7 +54,6 @@ export default App;
 
 {
 	/* 
-    <LoginComponent authService={authService} setUserNameCb={setUserName} /> 
     <CreateSpace dataService={dataService} />
     <Spaces dataService={dataService} />
   */
