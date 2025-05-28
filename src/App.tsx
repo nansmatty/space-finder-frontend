@@ -4,8 +4,11 @@ import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import LoginComponent from './components/LoginComponent';
 import { AuthService } from './services/AuthService';
+import { DataService } from './services/DataService';
+import CreateSpace from './components/spaces/CreateSpaces';
 
 const authService = new AuthService();
+const dataService = new DataService(authService);
 
 function App() {
 	const [userName, setUserName] = useState<string | undefined>(undefined);
@@ -33,7 +36,7 @@ function App() {
 				},
 				{
 					path: '/createSpace',
-					element: <div>Create Space page!!!</div>,
+					element: <CreateSpace dataService={dataService} />,
 				},
 				{
 					path: '/spaces',
@@ -54,7 +57,7 @@ export default App;
 
 {
 	/* 
-    <CreateSpace dataService={dataService} />
+   
     <Spaces dataService={dataService} />
   */
 }
