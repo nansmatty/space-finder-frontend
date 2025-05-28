@@ -1,6 +1,8 @@
 import type { AuthService } from './AuthService';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { DataStack } from '../../../space-finder/outputs.json';
+import { DataStack, ApiStack } from '../../../space-finder/outputs.json';
+
+const spacesUrl = ApiStack.SpaceApiEndpointDA7E4050 + 'spaces';
 
 export class DataService {
 	private authService: AuthService;
@@ -12,13 +14,30 @@ export class DataService {
 	}
 
 	public async createSpace(name: string, location: string, photo?: File) {
-		const credentials = await this.authService.getTemporaryCredentials();
-		if (photo) {
-			const uploadUrl = await this.uploadPublicFile(photo);
-			console.log(uploadUrl);
-		}
+		try {
+			const space = {} as any;
+			space.name = name;
+			space.location = location;
 
-		return '123';
+			if (photo) {
+				const uploadUrl = await this.uploadPublicFile(photo);
+				space.photoUrl = uploadUrl;
+			}
+
+			const postResult = await fetch(spacesUrl, {
+				method: 'POST',
+				body: JSON.stringify(space),
+				headers: {
+					Authorization: this.authService.jwtToken!,
+				},
+			});
+
+			const postResultJSON = await postResult.json();
+
+			return postResultJSON.message;
+		} catch (error) {
+			console.log({ createspace_error: error });
+		}
 	}
 
 	private async uploadPublicFile(file: File) {
